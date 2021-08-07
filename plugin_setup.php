@@ -4,44 +4,47 @@
 include_once "/opt/fpp/www/common.php";
 include_once 'functions.inc.php';
 include_once 'commonFunctions.inc.php';
-
-
-$pluginName = basename(dirname(__FILE__));
 include_once 'version.inc';
 
+$pluginName = basename(dirname(__FILE__));
+
+
+//include $messageQueuePluginPath . "functions.inc.php";
+
 $PLAYLIST_NAME="";
-$MAJOR = "98";
-$MINOR = "01";
-$eventExtension = ".fevt";
+$fpp_matrixtools_Plugin = "fpp-matrixtools";
+$fpp_matrixtools_Plugin_Script = "scripts/matrixtools";
+$messageQueue_Plugin = "FPP-Plugin-MessageQueue";
+$matrixMessage_Plugin = "FPP-Plugin-Matrix-Message";
+$messageQueuePluginPath = $settings['pluginDirectory'] . "/" . $messageQueue_Plugin."/";
+include $messageQueuePluginPath . "functions.inc.php";
 
-
-//arg0 is  the program
-//arg1 is the first argument in the registration this will be --list
-$DEBUG=false;
-
-$SMSEventFile = $eventDirectory . "/" . $MAJOR . "_" . $MINOR.$eventExtension;
-$SMSGETScriptFilename = $scriptDirectory."/".$pluginName."_GET.sh";
-
-$messageQueue_Plugin = "MessageQueue";
-if (strpos($pluginName, "FPP-Plugin") !== false) {
-    $messageQueue_Plugin = "FPP-Plugin-MessageQueue";
-}
 $MESSAGE_QUEUE_PLUGIN_ENABLED=false;
 
 
 $logFile = $settings['logDirectory']."/".$pluginName.".log";
 
-$messageQueuePluginPath = $settings['pluginDirectory'] . "/" . $messageQueue_Plugin."/";
+
 $messageQueueFile = urldecode(ReadSettingFromFile("MESSAGE_FILE", $messageQueue_Plugin));
 
-if(file_exists($messageQueuePluginPath . "functions.inc.php"))
-{
-	include $messageQueuePluginPath . "functions.inc.php";
+if(file_exists( $pluginDirectory."/".$fpp_matrixtools_Plugin."/".$fpp_matrixtools_Plugin_Script) && file_exists( $pluginDirectory."/".$messageQueue_Plugin )&& file_exists( $pluginDirectory."/".$matrixMessage_Plugin )){
+	logEntry($pluginDirectory."/".$fpp_matrixtools_Plugin."/".$fpp_matrixtools_Plugin_Script." EXISTS: Enabling");
 	$MESSAGE_QUEUE_PLUGIN_ENABLED=true;
 
 } else {
-	logEntry("Message Queue Plugin not installed, please install");
-	echo "Message Queue Plugin not installed, please install and return to this plugin page";
+	if (!file_exists($pluginDirectory."/".$fpp_message_queue_Plugin )) {
+		logEntry("Message Queue to Matrix Overlay plugin is not installed, cannot use this plugin with out it");
+		echo "<h1>Message Queue to Matrix Overlay is not installed. Install the plugin and revisit this page to continue.</h1><br/>";	
+	}
+	if (!file_exists($pluginDirectory."/".$fpp_matrixtools_Plugin."/".$fpp_matrixtools_Plugin_Script)) {
+	logEntry("FPP Matrix tools plugin is not installed, cannot use this plugin with out it");
+	echo "<h1>FPP Matrix Tools plugin is not installed. Install the plugin and revisit this page to continue.</h1>";
+	}
+	if (!file_exists($pluginDirectory."/".$matrixMessage_Plugin)){
+		logEntry("FPP Matrix Message plugin is not installed, cannot use this plugin with out it");
+		echo "<h1>FPP Matrix Message plugin is not installed. Install the plugin and revisit this page to continue.</h1>";
+	}
+
 	exit(0);
 }
 
@@ -49,15 +52,15 @@ if(file_exists($messageQueuePluginPath . "functions.inc.php"))
 $gitURL = "https://github.com/FalconChristmas/FPP-Plugin-EventDate.git";
 
 
-$pluginUpdateFile = $settings['pluginDirectory']."/".$pluginName."/"."pluginUpdate.inc";
+//$pluginUpdateFile = $settings['pluginDirectory']."/".$pluginName."/"."pluginUpdate.inc";
 
 
-logEntry("plugin update file: " . $pluginUpdateFile);
+//logEntry("plugin update file: " . $pluginUpdateFile);
 
-
+/** check and enable in the future?
 if(isset($_POST['updatePlugin']))
 {
-	$updateResult = updatePluginFromGitHub($gitURL, $branch="master", $pluginName);
+	$updateResult = updatePluginFromGitHub($gitURL, $branch="Command-Preset", $pluginName);
 
 	logEntry("update result: ". $updateResult);//."<br/> \n";
 	
@@ -74,81 +77,11 @@ if(isset($_POST['updatePlugin']))
 	
 	
 }
+*/
 if (isset($pluginSettings['DEBUG'])) {
     $DEBUG = $pluginSettings['DEBUG'];
 }
 
-if(isset($_POST['submit']))
-{
-	if($DEBUG)
-        print_r($_POST);
-	
-
-//	echo "Writring config fie <br/> \n";
-	WriteSettingToFile("MONTH",urlencode($_POST['MONTH']), $pluginName);
-	WriteSettingToFile("DAY",urlencode($_POST['DAY']), $pluginName);
-	WriteSettingToFile("YEAR",urlencode($_POST['YEAR']), $pluginName);
-	
-	WriteSettingToFile("MIN",urlencode($_POST['MIN']), $pluginName);
-	WriteSettingToFile("HOUR",urlencode($_POST['HOUR']), $pluginName);
-	WriteSettingToFile("PRE_TEXT",urlencode($_POST["PRE_TEXT"]), $pluginName);
-	WriteSettingToFile("POST_TEXT",urlencode($_POST["POST_TEXT"]), $pluginName);
-	WriteSettingToFile("EVENT_NAME",urlencode($_POST["EVENT_NAME"]), $pluginName);
-	
-	WriteSettingToFile("LAST_READ",urlencode($_POST["LAST_READ"]), $pluginName);
-	
-	WriteSettingToFile("MATRIX_LOCATION",urlencode($_POST["MATRIX_LOCATION"]), $pluginName);
-	
-    $pluginConfigFile = $settings['configDirectory'] . "/plugin." . $pluginName;
-    if (file_exists($pluginConfigFile)) {
-        $pluginSettings = parse_ini_file($pluginConfigFile);
-    }
-}
-
-//THIS IS SO COOL!
-//set the variable names as necessary??? do we even need to do this???
-
-foreach ($pluginSettings as $key => $value) {
-
-	if($DEBUG) {
-		logEntry("KEY: ".$key." = ".$value);
-	}
-	//	echo "Key: ".$key." " .$value."\n";
-
-	${$key} = urldecode($value);
-
-}
-	
-if(!isset($PRE_TEXT) || $PRE_TEXT == "") {
-	$PRE_TEXT = "It is ";
-}
-
-if(!isset($POST_TEXT) || $POST_TEXT =="") {
-	$POST_TEXT = " until ";
-}
-
-if(!isset($EVENT_NAME) || $EVENT_NAME == "") {
-	$EVENT_NAME = " THE EVENT!";
-}
-
-if(!isset($LAST_READ) || (int)$LAST_READ == 0 || $LAST_READ == "") {
-		$LAST_READ=0;
-}
-    if (!isset($YEAR)) {
-        $YEAR = date("Y");
-    }
-    if (!isset($MONTH)) {
-        $MONTH = 12;
-    }
-    if (!isset($DAY)) {
-        $DAY = 25;
-    }
-    if (!isset($HOUR)) {
-        $HOUR = 0;
-    }
-    if (!isset($MIN)) {
-        $MIN = 0;
-    }
 
 $Plugin_DBName = $messageQueueFile;
 	
@@ -160,6 +93,15 @@ createTables();
 
 <html>
 <head>
+<style>
+#messageText {
+	border-style: inset; 
+	font-weight: bold; 
+	font-size: 30px;	
+}
+	
+
+</style>
 </head>
 
 <div id="EventDate" class="settings">
@@ -180,173 +122,36 @@ createTables();
 <li>Schedule the event in your Playlist to send the countdown out your Matrix</li>
 </ul>
 
-<p/>
-<b>This plugin requires ACCURATE time for its calculation. Please ensure RTC is working properly</b>
+<p><b>This plugin requires ACCURATE time for its calculation.</b></p>
+</div>
+<div>
 
-<p/>
+<p>ENABLE PLUGIN: <?PrintSettingCheckbox("Event Date Plugin", "ENABLED", 0, 0, "ON", "OFF", $pluginName ,$callbackName = "", $changedFunction=""); ?> </p>
+<p>Event Name: <?  PrintSettingTextSaved("EVENT_NAME", 0, 0, $maxlength = 32, $size = 32, $pluginName, $defaultValue = "Christmas", $callbackName = "updateOutputText", $changedFunction = "", $inputType = "text", $sData = array());?> </p>
+<p>Event Date: <? PrintSettingSelect("MONTH", "MONTH", 0, 0, "", getMonths(), $pluginName, $callbackName = "updateOutputText", $changedFunction = ""); ?> 
+<? PrintSettingSelect("DAY", "DAY", 0, 0, "", getDaysOfMonth(), $pluginName, $callbackName = "updateOutputText", $changedFunction = ""); ?>
+ <? PrintSettingSelect("YEAR", "YEAR", 0, 0, "", getYears(), $pluginName, $callbackName = "updateOutputText", $changedFunction = ""); ?>
+ Hour: <? PrintSettingSelect("HOUR", "HOUR", 0, 0, "", getHours(), $pluginName, $callbackName = "updateOutputText", $changedFunction = ""); ?>
+ Min: <? PrintSettingSelect("MIN", "MIN", 0, 0, "", getMinutes(), $pluginName, $callbackName = "updateOutputText", $changedFunction = ""); ?></p>
+<p>Pre Text: <?  PrintSettingTextSaved("PRE_TEXT", 0, 0, $maxlength = 32, $size = 32, $pluginName, $defaultValue = "It is", $callbackName = "updateOutputText", $changedFunction = "", $inputType = "text", $sData = array());?> </p>
+<p>Post Text <?  PrintSettingTextSaved("POST_TEXT", 0, 0, $maxlength = 32, $size = 32, $pluginName, $defaultValue = "until", $callbackName = "updateOutputText", $changedFunction = "", $inputType = "text", $sData = array());?> </p>
+<p><h3>If the remaining time is less than a day then you can select some additional display options</h3></p>
+<p>Include Hours: <?PrintSettingCheckbox("INCLUDE_HOURS", "INCLUDE_HOURS", 0, 0, "ON", "OFF", $pluginName ,$callbackName = "updateOutputTextHours", $changedFunction = ""); ?> </p>
+<p>Include Minutes: <?PrintSettingCheckbox("INCLUDE_MINUTES", "INCLUDE_MINUTES", 0, 0, "ON", "OFF", $pluginName ,$callbackName = "updateOutputTextMinutes", $changedFunction = ""); ?> </p>
+<p>Your message will appear as:</p>
+<div class= "marquee" id="messageText" >
+<p>temp text <p>
 
-<form method="post" action="/plugin.php?plugin=<?echo $pluginName;?>&page=plugin_setup.php">
-
-
-<?
-//will add a 'reset' to this later
-
-echo "<input type=\"hidden\" name=\"LAST_READ\" value=\"".$LAST_READ."\"> \n";
-
-
-$restart=0;
-$reboot=0;
-
-echo "ENABLE PLUGIN: ";
-
-
-PrintSettingCheckbox("Plugin: " . $pluginName . " ", "ENABLED", $restart = 0, $reboot = 0, "ON", "OFF", $pluginName = $pluginName, $callbackName = "");
-
-
-echo "<p/> \n";
-
-
-echo "Pre Text: (It is): \n";
-echo "<input type=\"text\" value=\"".$PRE_TEXT."\" name=\"PRE_TEXT\"> \n";
-
-echo "<p/> \n";
-
-$strEventDate = $YEAR."-".$MONTH."-".$DAY." ".$HOUR.":".$MIN.":00";
-
-logEntry( "event date: " . $strEventDate);
-
-//$date1 = strtotime('2013-07-03 18:00:00');
-$date1 = strtotime($strEventDate);
-
-$date2 = time();
-$subTime = $date1 - $date2;
-//$subTime = $date2 - $date1;
-
-$y = ($subTime/(60*60*24*365));
-$d = ($subTime/(60*60*24))%365;
-$h = ($subTime/(60*60))%24;
-$m = ($subTime/60)%60 + 1;
-
-logEntry( "Difference between ".date('Y-m-d H:i:s',$date1)." and ".date('Y-m-d H:i:s',$date2)." is:".$y." years ".$d." days ".$h." hours ".$m." minutes");
-//echo $y." years\n";
-//echo $d." days\n";
-//echo $h." hours\n";
-//echo $m." minutes\n";
-
-$messageText = $PRE_TEXT;
-if ($y >= 1){
-	if ($y >=2){
-		$messageText .= intval($y). " years ";
-	} else {
-		$messageText .= intval($y). " year ";
-	}
-}
-if ($d >= 1){
-	if ($d >=2){
-		$messageText .= intval($d). " days ";
-	} else {
-		$messageText .= intval($d). " day ";
-	}
-	if($INCLUDE_HOURS == "ON"){
-		if ($h >=2) {
-			$messageText .= intval($h). " hours ";
-		} else {
-			if ($h >= 1) {
-				$messageText .= intval($h). " hour ";
-			}
-		}
-	}
-	if($INCLUDE_MINUTES == "ON"){
-		if ($m >=2) {
-			$messageText .= intval($m). " minutes ";
-		} else {
-			$messageText .= intval($m). " minute ";
-		}	
-	}
-} else {
-	if ($h >=2) {
-		$messageText .= intval($h). " hours ";
-	} else {
-		if ($h >=1) {
-			$messageText .= intval($h). " hour ";
-		}
-	}
-	if ($m >=2) {
-		$messageText .= intval($m). " minutes ";
-	} else {
-		$messageText .= intval($m). " minute ";
-	}
-}
-
-$messageText .= " ".$POST_TEXT. " ".$EVENT_NAME;
+</div>
+<input type=hidden name=LAST_READ value= <? $LAST_READ ?>>
+<p><h3>If you want your message to display immediately when the command to run the countdown </br>
+is activated then enable the Immediate Output. Otherwise the message will be stored in the </br>
+Matrix Message Queue until you give the Matrix Message Queue the command to run.</h3></p>
+<p>Immediately output to Matrix (Run MATRIX plugin): <? PrintSettingCheckbox("Immediate output to Matrix", "IMMEDIATE_OUTPUT", $restart = 0, $reboot = 0, "ON", "OFF", $pluginName = $pluginName, $callbackName = ""); ?> </p>
+<p>The Matrix message Plugin location should be the default of 127.0.0.1 unless you have a specialized installation configuration.</p>
+MATRIX Message Plugin Location: ;<?  PrintSettingTextSaved("MATRIX_LOCATION", 0, 0, $maxlength = 15, $size = 15, $pluginName, $defaultValue = "127.0.0.1", $callbackName = "", $changedFunction = "", $inputType = "text", $sData = array());?> 
 
 
-echo "<p/> \n";
-echo "EVENT DATE: \n";
-printMonthSelection($MONTH, "MONTH");
-printDaySelection($DAY, "DAY");
-printYearSelection($YEAR, "YEAR");
-
-echo "Hour: \n";
-printHourSelection($HOUR, "HOUR");
-echo "Min: \n";
-printMinSelection($MIN, "MIN");
-
-echo "<p/> \n";
-
-echo "Post Text: (Until <Event Name>): \n";
-echo "<input type=\"text\" value=\"".$POST_TEXT."\" name=\"POST_TEXT\"> \n";
-
-echo "<p/> \n";
-
-echo "Event Name: (Christmas, Halloween, Labor day): \n";
-echo "<input type=\"text\" value=\"".$EVENT_NAME."\" name=\"EVENT_NAME\"> \n";
-
-
-echo "<p/>";
-
-echo "If Remaining time >= 1 day, include: \n";
-echo "<br/> \n";
-echo "Include Hours: \n";
-PrintSettingCheckbox("Include Days ", "INCLUDE_HOURS", $restart = 0, $reboot = 0, "ON", "OFF", $pluginName = $pluginName, $callbackName = "");
-
-echo "<br/> \n";
-echo "Include Minutes: \n";
-PrintSettingCheckbox("Include Hours", "INCLUDE_MINUTES", $restart = 0, $reboot = 0, "ON", "OFF", $pluginName = $pluginName, $callbackName = "");
-
-echo "<p/> \n";
-echo "Will appear as: \n";
-echo "<hr/> \n";
-echo "<marquee behavior=\"scroll\" scrollamount=\"5\" direction=\"left\" onmouseover=\"this.stop();\" onmouseout=\"this.start();\">\n";
-
-echo preg_replace('!\s+!', ' ', $messageText);
-echo "</marquee> \n";
-echo "<hr/> \n";
-
-echo "<p/> \n";
-echo "Immediately output to Matrix (Run MATRIX plugin): ";
-
-//if($IMMEDIATE_OUTPUT == "on" || $IMMEDIATE_OUTPUT == 1) {
-//	echo "<input type=\"checkbox\" checked name=\"IMMEDIATE_OUTPUT\"> \n";
-	PrintSettingCheckbox("Immediate output to Matrix", "IMMEDIATE_OUTPUT", $restart = 0, $reboot = 0, "ON", "OFF", $pluginName = $pluginName, $callbackName = "");
-//} else {
-	//echo "<input type=\"checkbox\"  name=\"IMMEDIATE_OUTPUT\"> \n";
-//}
-echo "<p/> \n";
-?>
-MATRIX Message Plugin Location: (IP Address. default 127.0.0.1);
-<input type="text" size="15" value="<? if($MATRIX_LOCATION !="" ) { echo $MATRIX_LOCATION; } else { echo "127.0.0.1";}?>" name="MATRIX_LOCATION" id="MATRIX_LOCATION"></input>
-<p/>
-
-
-<input id="submit_button" name="submit" type="submit" class="buttons" value="Save Config">
-<?
- if(file_exists($pluginUpdateFile))
- {
- 	//echo "updating plugin included";
-	include $pluginUpdateFile;
-}
-?>
 </form>
 
 
@@ -354,4 +159,83 @@ MATRIX Message Plugin Location: (IP Address. default 127.0.0.1);
 </fieldset>
 </div>
 <br />
+
+<script>
+updateOutputText();
+
+function updateOutputTextHours(updateOutput){
+updateOutputText();	
+}
+
+function updateOutputTextMinutes(updateOutput){
+updateOutputText();	
+}
+function updateOutputText(){
+	
+	var messageText= getMessageText();
+	document.getElementById("messageText").innerHTML = messageText;
+}
+function getMessageText(){
+	var eventName = document.getElementById("EVENT_NAME").value;
+	var eventMonth = parseInt(document.getElementById("MONTH").value)-1;
+	var eventDay = document.getElementById("DAY").value;
+	var eventYear = document.getElementById("YEAR").value;
+	var eventHour = document.getElementById("HOUR").value;
+	var eventMin = document.getElementById("MIN").value;
+	var preText = document.getElementById("PRE_TEXT").value;
+	var postText = document.getElementById("POST_TEXT").value;
+	var incHours = document.getElementById("INCLUDE_HOURS").checked;
+	var incMin = document.getElementById("INCLUDE_MINUTES").checked;
+	var eventDate = new Date(eventYear, eventMonth, eventDay, eventHour, eventMin  );
+	var currentDate= new Date();
+	var rawTimeDiff = Math.floor((eventDate - currentDate)/1000);
+	var yearsToDate = Math.floor(rawTimeDiff/(60*60*24*365));
+	var daysToDate = Math.floor(rawTimeDiff/(60*60*24))%365;
+	var hoursToDate = Math.floor(rawTimeDiff/(60*60))%24;
+	var minutesToDate = Math.floor(rawTimeDiff/60)%60 +1;
+	var messageText = preText;
+
+	if (yearsToDate >= 1){
+		if (yearsToDate >=2){
+			messageText += " " + yearsToDate + " years ";
+		}else {
+			messageText += " " + yearsToDate + " year ";
+		}
+	}else{
+		messageText += " ";
+	}
+	
+	if (daysToDate >= 1){
+		if (daysToDate >=2){
+			messageText += daysToDate + " days ";
+		} else {
+			messageText += daysToDate + " day ";			
+		}
+	}else {
+		if(incHours == true){			
+			if (hoursToDate >=2) {
+				messageText += hoursToDate + " hours ";
+			} else {
+				if (hoursToDate >= 1) {
+				messageText += hoursToDate + " hour ";
+				}
+			}
+		}
+		
+		if(incMin == true){
+			if (minutesToDate >=2) {
+				messageText += minutesToDate + " minutes ";
+			} else {
+				messageText += minutesToDate + " minute ";
+			}	
+		}
+	} 
+	messageText += postText + " " + eventName;
+
+	return messageText;
+	
+
+}
+</script>
+
 </html>
