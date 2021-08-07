@@ -103,7 +103,7 @@ $subTime = $date1 - $date2;
 $y = ($subTime/(60*60*24*365));
 $d = ($subTime/(60*60*24))%365;
 $h = ($subTime/(60*60))%24;
-$m = ($subTime/60)%60;
+$m = ($subTime/60)%60 +1;
 
 logEntry( "Difference between ".date('Y-m-d H:i:s',$date1)." and ".date('Y-m-d H:i:s',$date2)." is:".$y." years ".$d." days ".$h." hours ".$m." minutes");
 //echo $y." years\n";
@@ -118,6 +118,8 @@ if ($y >= 1){
 	} else {
 		$messageText .= intval($y). " year ";
 	}
+} else {
+	$messageText .= " ";
 }
 if ($d >= 1){
 	if ($d >=2){
@@ -125,6 +127,7 @@ if ($d >= 1){
 	} else {
 		$messageText .= intval($d). " day ";
 	}
+}else {
 	if($INCLUDE_HOURS == "ON"){
 		if ($h >=2) {
 			$messageText .= intval($h). " hours ";
@@ -141,20 +144,7 @@ if ($d >= 1){
 			$messageText .= intval($m). " minute ";
 		}	
 	}
-} else {
-	if ($h >=2) {
-		$messageText .= intval($h). " hours ";
-	} else {
-		if ($h >=1) {
-			$messageText .= intval($h). " hour ";
-		}
-	}
-	if ($m >=2) {
-		$messageText .= intval($m). " minutes ";
-	} else {
-		$messageText .= intval($m). " minute ";
-	}
-}
+} 
 
 $messageText .= " ".$POST_TEXT. " ".$EVENT_NAME;
 
