@@ -1,18 +1,24 @@
 {
     "repoName": "FPP-Plugin-EventDate",
     "name": "Event Date",
-    "author": "Ben Shaver (bshaver) and Steve Smock",
-    "description": "Dynamic Event Date countdown for display",
+    "author": "Ben Shaver (bshaver) and Steve Smock, updated by Rick Harris",
+    "description": "This plugin will give you a countdown to a specified date",
     "homeURL": "https://github.com/FalconChristmas/FPP-Plugin-EventDate",
     "srcURL": "https://github.com/FalconChristmas/FPP-Plugin-EventDate.git",
     "bugURL": "https://github.com/FalconChristmas/FPP-Plugin-EventDate/issues",
     "allowUpdates": 1,
     "versions": [
-        {
-            "minFPPVersion": "2.0",
-            "maxFPPVersion": "0",
+         {
+            "minFPPVersion": "2.7",
+            "maxFPPVersion": "4.6.9",
             "branch": "master",
             "sha": ""
-        }
+        },
+        {
+                "minFPPVersion": "5.0",
+                "maxFPPVersion": "0",
+                "branch": "Command-Preset",
+                "sha": ""
+            }
     ]
 }
