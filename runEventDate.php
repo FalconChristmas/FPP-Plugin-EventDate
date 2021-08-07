@@ -127,7 +127,6 @@ if ($d >= 1){
 	} else {
 		$messageText .= intval($d). " day ";
 	}
-}else {
 	if($INCLUDE_HOURS == "ON"){
 		if ($h >=2) {
 			$messageText .= intval($h). " hours ";
@@ -138,12 +137,29 @@ if ($d >= 1){
 		}
 	}
 	if($INCLUDE_MINUTES == "ON"){
+		if($INCLUDE_HOURS == "OFF"){
+			$m += $h *60;
+		}
 		if ($m >=2) {
 			$messageText .= intval($m). " minutes ";
 		} else {
 			$messageText .= intval($m). " minute ";
-		}	
+		}		
 	}
+}else {
+	if ($h >=2) {
+			$messageText .= intval($h). " hours ";
+		} else {
+			if ($h >= 1) {
+				$messageText .= intval($h). " hour ";
+			}
+		}
+	if ($m >=2) {
+			$messageText .= intval($m). " minutes ";
+		} else {
+			$messageText .= intval($m). " minute ";
+		}	
+	
 } 
 
 $messageText .= " ".$POST_TEXT. " ".$EVENT_NAME;
