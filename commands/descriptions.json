@@ -1,0 +1,7 @@
+[
+{ "name": "Run Event Date",
+  "script": "RUN-COUNTDOWN-SCRIPT.sh",
+  "args": [
+  ]
+}
+]
