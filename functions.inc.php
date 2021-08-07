@@ -1,5 +1,33 @@
 <?php
 
+function getMonths(){
+	return $monthList= array('January' => 1, 'February' => 2, 'March' => 3, 'April' => 4, 'May' => 5, 'June' => 6, 'July' => 7, 'August' => 8, 'September' => 9, 'October' => 10, 'November' => 11, 'December' => 12);
+}
+
+function getDaysOfMonth(){
+	for($i=1; $i<=31; $i++){
+		$daysList[$i]=$i;
+	}
+	return $daysList;
+}
+
+function getYears(){
+		for($i=2020; $i<=2040; $i++){
+		$yearList[$i]=$i;
+	}
+	return $yearList;
+}
+
+function getHours(){
+	return $hours= array(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23);
+}
+
+function getMinutes(){
+	for( $i= 0; $i<=59; $i++){
+		$minuteList[str_pad($i,2,'0',STR_PAD_LEFT)] = $i;
+	}
+	return $minuteList;
+}
 
 //get the fpp log level
 function getFPPLogLevel() {
