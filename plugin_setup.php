@@ -94,12 +94,51 @@ createTables();
 <html>
 <head>
 <style>
-#messageText {
-	border-style: inset; 
-	font-weight: bold; 
-	font-size: 30px;	
+
+#scroll-container {
+  border: 3px solid black;
+  border-radius: 5px;
+  overflow: hidden;
 }
+
+#scroll-text {
 	
+	font-weight: bold; 
+	font-size: 30px;
+	
+  /* animation properties */
+  -moz-transform: translateX(100%);
+  -webkit-transform: translateX(100%);
+  transform: translateX(100%);
+  
+  -moz-animation: my-animation 15s linear infinite;
+  -webkit-animation: my-animation 15s linear infinite;
+  animation: my-animation 15s linear infinite;
+}
+
+/* for Firefox */
+@-moz-keyframes my-animation {
+  from { -moz-transform: translateX(100%); }
+  to { -moz-transform: translateX(-100%); }
+}
+
+/* for Chrome */
+@-webkit-keyframes my-animation {
+  from { -webkit-transform: translateX(100%); }
+  to { -webkit-transform: translateX(-100%); }
+}
+
+@keyframes my-animation {
+  from {
+    -moz-transform: translateX(100%);
+    -webkit-transform: translateX(100%);
+    transform: translateX(100%);
+  }
+  to {
+    -moz-transform: translateX(-50%);
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+  }	
 
 </style>
 </head>
@@ -135,12 +174,13 @@ createTables();
  Min: <? PrintSettingSelect("MIN", "MIN", 0, 0, "", getMinutes(), $pluginName, $callbackName = "updateOutputText", $changedFunction = ""); ?></p>
 <p>Pre Text: <?  PrintSettingTextSaved("PRE_TEXT", 0, 0, $maxlength = 32, $size = 32, $pluginName, $defaultValue = "It is", $callbackName = "updateOutputText", $changedFunction = "", $inputType = "text", $sData = array());?> </p>
 <p>Post Text <?  PrintSettingTextSaved("POST_TEXT", 0, 0, $maxlength = 32, $size = 32, $pluginName, $defaultValue = "until", $callbackName = "updateOutputText", $changedFunction = "", $inputType = "text", $sData = array());?> </p>
-<p><h3>If the remaining time is less than a day then you can select some additional display options</h3></p>
+<p><h3>If the remaining time is more than a day then you can select to include the hours and/or minutes.</br>
+If the remaining time is less than a day, the plugin will automatically display the hours and minutes remaining.</h3></p>
 <p>Include Hours: <?PrintSettingCheckbox("INCLUDE_HOURS", "INCLUDE_HOURS", 0, 0, "ON", "OFF", $pluginName ,$callbackName = "updateOutputTextHours", $changedFunction = ""); ?> </p>
 <p>Include Minutes: <?PrintSettingCheckbox("INCLUDE_MINUTES", "INCLUDE_MINUTES", 0, 0, "ON", "OFF", $pluginName ,$callbackName = "updateOutputTextMinutes", $changedFunction = ""); ?> </p>
 <p>Your message will appear as:</p>
-<div class= "marquee" id="messageText" >
-<p>temp text <p>
+<div class= "marquee" id="scroll-container" >
+<p id="scroll-text">temp text <p>
 
 </div>
 <input type=hidden name=LAST_READ value= <? $LAST_READ ?>>
@@ -173,7 +213,7 @@ updateOutputText();
 function updateOutputText(){
 	
 	var messageText= getMessageText();
-	document.getElementById("messageText").innerHTML = messageText;
+	document.getElementById("scroll-text").innerHTML = messageText;
 }
 function getMessageText(){
 	var eventName = document.getElementById("EVENT_NAME").value;
@@ -204,32 +244,50 @@ function getMessageText(){
 	}else{
 		messageText += " ";
 	}
-	
+
 	if (daysToDate >= 1){
 		if (daysToDate >=2){
 			messageText += daysToDate + " days ";
 		} else {
 			messageText += daysToDate + " day ";			
 		}
-	}else {
 		if(incHours == true){			
 			if (hoursToDate >=2) {
 				messageText += hoursToDate + " hours ";
 			} else {
 				if (hoursToDate >= 1) {
-				messageText += hoursToDate + " hour ";
+					messageText += hoursToDate + " hour ";
 				}
 			}
 		}
 		
 		if(incMin == true){
+			if(incHours == false){
+					minutesToDate += hoursToDate*60;
+			}
 			if (minutesToDate >=2) {
 				messageText += minutesToDate + " minutes ";
 			} else {
 				messageText += minutesToDate + " minute ";
 			}	
 		}
-	} 
+	}else {
+			
+		if (hoursToDate >=2) {
+			messageText += hoursToDate + " hours ";
+		} else {
+			if (hoursToDate >= 1) {
+				messageText += hoursToDate + " hour ";
+			}
+		}
+		
+		if (minutesToDate >=2) {
+			messageText += minutesToDate + " minutes ";
+		} else {
+			messageText += minutesToDate + " minute ";
+		}	
+	}           
+        
 	messageText += postText + " " + eventName;
 
 	return messageText;
