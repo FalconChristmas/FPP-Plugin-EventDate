@@ -51,29 +51,114 @@ define('LOCK_DIR', '/tmp/');
 define('LOCK_SUFFIX', $pluginName.'.lock');
 
 $pluginConfigFile = $settings['configDirectory'] . "/plugin." .$pluginName;
-if (file_exists($pluginConfigFile))
-	$pluginSettings = parse_ini_file($pluginConfigFile);
 
+//get settings and if no user stored setting, use a default value
+
+if (file_exists($pluginConfigFile)){
+	$pluginSettings = parse_ini_file($pluginConfigFile);
+}else{
+	$pluginSettings = array(); //There have been no settings saved by the user, create empty array
+}
+
+if (isset($pluginSettings['ENABLED'])){
+    $ENABLED = $pluginSettings['ENABLED'];
+}else{
+     $ENABLED ="";
+}
+
+if (isset($pluginSettings['EVENT_NAME'])){
+    $EVENT_NAME = $pluginSettings['EVENT_NAME'];
+}else{
+	$EVENT_NAME ="The Event!";
+	logEntry("Event Name not specifically defined, using default The Event!");
+}
+
+if (isset($pluginSettings['MONTH'])){
+    $MONTH = $pluginSettings['MONTH'];
+}else{
+	$MONTH ="1";
+	logEntry("Month not specifically defined, using default of January");
+}
+
+if (isset($pluginSettings['DAY'])){
+    $DAY = $pluginSettings['DAY'];
+}else{
+	$DAY ="1";
+	logEntry("Day not specifically defined, using default of 1");
+}
+
+if (isset($pluginSettings['YEAR'])){
+    $YEAR = $pluginSettings['YEAR'];
+}else{
+	$YEAR = date("Y")+1;
+	logEntry("Year not specifically defined, using default of next year");
+}
+
+if (isset($pluginSettings['HOUR'])){
+    $HOUR = $pluginSettings['HOUR'];
+}else{
+	$HOUR = "0";
+	logEntry("Hour not specifically defined, using default");
+}
+
+if (isset($pluginSettings['MIN'])){
+    $MIN = $pluginSettings['MIN'];
+}else{
+	$MIN = "0";
+	logEntry("Minutes not specifically defined, using default");
+}
+
+if (isset($pluginSettings['PRE_TEXT'])){
+    $PRE_TEXT = $pluginSettings['PRE_TEXT'];
+}else{
+	$PRE_TEXT = "It is";
+	logEntry("Pre Text not specifically defined, using default");
+}
+
+if (isset($pluginSettings['POST_TEXT'])){
+    $POST_TEXT = $pluginSettings['POST_TEXT'];
+}else{
+	$POST_TEXT = "until";
+	logEntry("Post Text not specifically defined, using default");
+}
+
+if (isset($pluginSettings['INCLUDE_HOURS'])){
+    $INCLUDE_HOURS = $pluginSettings['INCLUDE_HOURS'];
+}else{
+	$INCLUDE_HOURS = "";
+	logEntry("Include hours not specifically defined, using default");
+}
+
+if (isset($pluginSettings['INCLUDE_MINUTES'])){
+    $INCLUDE_MINUTES = $pluginSettings['INCLUDE_MINUTES'];
+}else{
+	$INCLUDE_MINUTES = "";
+	logEntry("Include minutes not specifically defined, using default");
+}
+
+if (isset($pluginSettings['IMMEDIATE_OUTPUT'])){
+    $IMMEDIATE_OUTPUT = $pluginSettings['IMMEDIATE_OUTPUT'];
+}else{
+	$IMMEDIATE_OUTPUT = "ON";
+	logEntry("Immediate Output not specifically defined, using default");
+}
+
+if (isset($pluginSettings['ENABLED'])){
+    $ENABLED = $pluginSettings['ENABLED'];
+}else{
+	$ENABLED = "";
+	logEntry("Enabled not specifically defined, using default");
+}
+
+if (isset($pluginSettings['MATRIX_LOCATION'])){
+    $MATRIX_LOCATION = $pluginSettings['MATRIX_LOCATION'];
+}else{
+	$MATRIX_LOCATION = "127.0.0.1";
+	logEntry("Matrix Location not specifically defined, using default");
+}
 	$logFile = $settings['logDirectory']."/".$pluginName.".log";
 	$DEBUG=urldecode($pluginSettings['DEBUG']);
 	
-
-//THIS IS O COOL!
-//set the variable names as necessary??? do we even need to do this???
-
-foreach ($pluginSettings as $key => $value) {
-
-	if($DEBUG) {
-		logEntry("KEY: ".$key." = ".$value);
-	}
-	//	echo "Key: ".$key." " .$value."\n";
-
-	${$key} = urldecode($value);
-
-}
-
-
-
 if(strtoupper($ENABLED) != "ON") {
 	$REPLY_TEXT_PLUGIN_DISABLED = "We're sorry, the system is not accepting SMS at this time";
 	
@@ -106,10 +191,7 @@ $h = ($subTime/(60*60))%24;
 $m = ($subTime/60)%60 +1;
 
 logEntry( "Difference between ".date('Y-m-d H:i:s',$date1)." and ".date('Y-m-d H:i:s',$date2)." is:".$y." years ".$d." days ".$h." hours ".$m." minutes");
-//echo $y." years\n";
-//echo $d." days\n";
-//echo $h." hours\n";
-//echo $m." minutes\n";
+
 
 $messageText = $PRE_TEXT;
 if ($y >= 1){
@@ -182,21 +264,21 @@ if($IMMEDIATE_OUTPUT != "ON") {
 	
 	$pluginLatest = time ();
 	
-	// logEntry("message queue latest: ".$pluginLatest);
-	// logEntry("Writing high water mark for plugin: ".$pluginName." LAST_READ = ".$pluginLatest);
 	
-	// file_put_contents($messageQueuePluginPath.$pluginSubscriptions[$pluginIndex].".lastRead",$pluginLatest);
-	// WriteSettingToFile("LAST_READ",urlencode($pluginLatest),$pluginName);
-	
-	// do{
-	
-	logEntry ( "Matrix location: " . $MATRIX_LOCATION );
-	logEntry ( "Matrix Exec page: " . $MATRIX_EXEC_PAGE_NAME );
 	$MATRIX_ACTIVE = true;
+	logEntry ( "Data for curl command");
+	logEntry ( "Matrix location: " . $MATRIX_LOCATION );
+	logEntry ( "Matrix Message Plugin: " . $MATRIX_MESSAGE_PLUGIN_NAME );
+	logEntry ( "Matrix Exec page: " . $MATRIX_EXEC_PAGE_NAME );
+	logEntry ( "plugin name: " . $pluginName );
+	
+	
 	WriteSettingToFile ( "MATRIX_ACTIVE", urlencode ( $MATRIX_ACTIVE ), $pluginName );
+
 	logEntry ( "MATRIX ACTIVE: " . $MATRIX_ACTIVE );
 	
 	$curlURL = "http://" . $MATRIX_LOCATION . "/plugin.php?plugin=" . $MATRIX_MESSAGE_PLUGIN_NAME . "&page=" . $MATRIX_EXEC_PAGE_NAME . "&nopage=1&subscribedPlugin=" . $pluginName . "&onDemandMessage=" . urlencode ( $messageText );
+	logEntry ( "curlURL: " . $curlURL );
 	if ($DEBUG)
 		logEntry ( "MATRIX TRIGGER: " . $curlURL );
 		

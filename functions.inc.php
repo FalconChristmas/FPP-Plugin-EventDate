@@ -12,7 +12,8 @@ function getDaysOfMonth(){
 }
 
 function getYears(){
-		for($i=2020; $i<=2040; $i++){
+	$currentYear= date("Y");
+	for($currentYear; $i<=$currentYear+5; $i++){
 		$yearList[$i]=$i;
 	}
 	return $yearList;

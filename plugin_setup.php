@@ -57,27 +57,7 @@ $gitURL = "https://github.com/FalconChristmas/FPP-Plugin-EventDate.git";
 
 //logEntry("plugin update file: " . $pluginUpdateFile);
 
-/** check and enable in the future?
-if(isset($_POST['updatePlugin']))
-{
-	$updateResult = updatePluginFromGitHub($gitURL, $branch="Command-Preset", $pluginName);
 
-	logEntry("update result: ". $updateResult);//."<br/> \n";
-	
-	if(file_exists($settings['pluginDirectory']."/".$pluginName."/fpp_install.sh"))
-	{
-		$updateInstallCMD = $settings['pluginDirectory']."/".$pluginName."/fpp_install.sh";
-		logEntry("running upgrade install script: ".$updateInstallCMD);
-		exec($updateInstallCMD,$sysOutput);
-		//echo $sysOutput;
-	
-	} else {
-		logEntry("No fpp_install.sh upgrade script available");
-	}
-	
-	
-}
-*/
 if (isset($pluginSettings['DEBUG'])) {
     $DEBUG = $pluginSettings['DEBUG'];
 }
@@ -166,12 +146,12 @@ createTables();
 <div>
 
 <p>ENABLE PLUGIN: <?PrintSettingCheckbox("Event Date Plugin", "ENABLED", 0, 0, "ON", "OFF", $pluginName ,$callbackName = "", $changedFunction=""); ?> </p>
-<p>Event Name: <?  PrintSettingTextSaved("EVENT_NAME", 0, 0, $maxlength = 32, $size = 32, $pluginName, $defaultValue = "Christmas", $callbackName = "updateOutputText", $changedFunction = "", $inputType = "text", $sData = array());?> </p>
-<p>Event Date: <? PrintSettingSelect("MONTH", "MONTH", 0, 0, "", getMonths(), $pluginName, $callbackName = "updateOutputText", $changedFunction = ""); ?> 
-<? PrintSettingSelect("DAY", "DAY", 0, 0, "", getDaysOfMonth(), $pluginName, $callbackName = "updateOutputText", $changedFunction = ""); ?>
- <? PrintSettingSelect("YEAR", "YEAR", 0, 0, "", getYears(), $pluginName, $callbackName = "updateOutputText", $changedFunction = ""); ?>
- Hour: <? PrintSettingSelect("HOUR", "HOUR", 0, 0, "", getHours(), $pluginName, $callbackName = "updateOutputText", $changedFunction = ""); ?>
- Min: <? PrintSettingSelect("MIN", "MIN", 0, 0, "", getMinutes(), $pluginName, $callbackName = "updateOutputText", $changedFunction = ""); ?></p>
+<p>Event Name: <?  PrintSettingTextSaved("EVENT_NAME", 0, 0, $maxlength = 32, $size = 32, $pluginName, $defaultValue = "The Event!", $callbackName = "updateOutputText", $changedFunction = "", $inputType = "text", $sData = array());?> </p>
+<p>Event Date: <? PrintSettingSelect("MONTH", "MONTH", 0, 0, $defaultValue= "1", getMonths(), $pluginName, $callbackName = "updateOutputText", $changedFunction = ""); ?> 
+<? PrintSettingSelect("DAY", "DAY", 0, 0, $defaultValue= "1", getDaysOfMonth(), $pluginName, $callbackName = "updateOutputText", $changedFunction = ""); ?>
+ <? PrintSettingSelect("YEAR", "YEAR", 0, 0, $defaultValue= date("Y")+1, getYears(), $pluginName, $callbackName = "updateOutputText", $changedFunction = ""); ?>
+ Hour: <? PrintSettingSelect("HOUR", "HOUR", 0, 0, $defaultValue= "0", getHours(), $pluginName, $callbackName = "updateOutputText", $changedFunction = ""); ?>
+ Min: <? PrintSettingSelect("MIN", "MIN", 0, 0, $defaultValue= "0", getMinutes(), $pluginName, $callbackName = "updateOutputText", $changedFunction = ""); ?></p>
 <p>Pre Text: <?  PrintSettingTextSaved("PRE_TEXT", 0, 0, $maxlength = 32, $size = 32, $pluginName, $defaultValue = "It is", $callbackName = "updateOutputText", $changedFunction = "", $inputType = "text", $sData = array());?> </p>
 <p>Post Text <?  PrintSettingTextSaved("POST_TEXT", 0, 0, $maxlength = 32, $size = 32, $pluginName, $defaultValue = "until", $callbackName = "updateOutputText", $changedFunction = "", $inputType = "text", $sData = array());?> </p>
 <p><h3>If the remaining time is more than a day then you can select to include the hours and/or minutes.</br>
