@@ -13,7 +13,7 @@ function getDaysOfMonth(){
 
 function getYears(){
 	$currentYear= date("Y");
-	for($currentYear; $i<=$currentYear+5; $i++){
+	for($i=$currentYear; $i<=$currentYear+5; $i++){
 		$yearList[$i]=$i;
 	}
 	return $yearList;
@@ -340,10 +340,11 @@ function logEntry($data,$logLevel=1) {
 	global $logFile,$myPid, $LOG_LEVEL;
 
 	
-	if($logLevel <= $LOG_LEVEL) 
-		return
+	if($logLevel <= $LOG_LEVEL) {
+		return;
+	}
 		
-		$data = $_SERVER['PHP_SELF']." : [".$myPid."] ".$data;
+	$data = $_SERVER['PHP_SELF']." : [".$myPid."] ".$data;
 		
 		$logWrite= fopen($logFile, "a") or die("Unable to open file!");
 		fwrite($logWrite, date('Y-m-d h:i:s A',time()).": ".$data."\n");
