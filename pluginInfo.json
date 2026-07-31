@@ -16,6 +16,18 @@
         },
         {
             "minFPPVersion": "5.0",
+            "maxFPPVersion": "7.99",
+            "branch": "Command-Preset",
+            "sha": ""
+        },
+        {
+            "minFPPVersion": "8.0",
+            "maxFPPVersion": "8.99",
+            "branch": "Command-Preset",
+            "sha": ""
+        },
+        {
+            "minFPPVersion": "9.0",
             "maxFPPVersion": "9.99",
             "branch": "Command-Preset",
             "sha": ""
