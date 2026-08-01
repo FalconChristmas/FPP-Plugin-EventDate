@@ -210,7 +210,7 @@ function get_string_between ($str,$from,$to) {
 }
 //update plugin
 
-function updatePluginFromGitHub($gitURL, $branch="master", $pluginName) {
+function updatePluginFromGitHub($gitURL, $pluginName, $branch="master") {
 	
 	
 	global $settings;

@@ -17,12 +17,16 @@ $fpp_matrixtools_Plugin_Script = "scripts/matrixtools";
 $messageQueue_Plugin = "FPP-Plugin-MessageQueue";
 $matrixMessage_Plugin = "FPP-Plugin-Matrix-Message";
 $messageQueuePluginPath = $settings['pluginDirectory'] . "/" . $messageQueue_Plugin."/";
+$logFile = $settings['logDirectory']."/".$pluginName.".log";
+
+if (!file_exists($messageQueuePluginPath . "functions.inc.php")) {
+    logEntry("Message Queue Aggregator for Plugins is not installed, cannot use this plugin without it");
+    echo "<h1>Message Queue Aggregator for Plugins is not installed. Install the plugin and revisit this page to continue.</h1><br/>";
+    exit(0);
+}
 include $messageQueuePluginPath . "functions.inc.php";
 
 $MESSAGE_QUEUE_PLUGIN_ENABLED=false;
-
-
-$logFile = $settings['logDirectory']."/".$pluginName.".log";
 
 
 $messageQueueFile = urldecode(ReadSettingFromFile("MESSAGE_FILE", $messageQueue_Plugin));
@@ -32,7 +36,7 @@ if(file_exists( $pluginDirectory."/".$fpp_matrixtools_Plugin."/".$fpp_matrixtool
 	$MESSAGE_QUEUE_PLUGIN_ENABLED=true;
 
 } else {
-	if (!file_exists($pluginDirectory."/".$fpp_message_queue_Plugin )) {
+	if (!file_exists($pluginDirectory."/".$messageQueue_Plugin )) {
 		logEntry("Message Queue to Matrix Overlay plugin is not installed, cannot use this plugin with out it");
 		echo "<h1>Message Queue to Matrix Overlay is not installed. Install the plugin and revisit this page to continue.</h1><br/>";	
 	}
@@ -41,8 +45,8 @@ if(file_exists( $pluginDirectory."/".$fpp_matrixtools_Plugin."/".$fpp_matrixtool
 	echo "<h1>FPP Matrix Tools plugin is not installed. Install the plugin and revisit this page to continue.</h1>";
 	}
 	if (!file_exists($pluginDirectory."/".$matrixMessage_Plugin)){
-		logEntry("FPP Matrix Message plugin is not installed, cannot use this plugin with out it");
-		echo "<h1>FPP Matrix Message plugin is not installed. Install the plugin and revisit this page to continue.</h1>";
+		logEntry("Message Queue to Matrix Overlay is not installed, cannot use this plugin with out it");
+		echo "<h1>Message Queue to Matrix Overlay is not installed. Install the plugin and revisit this page to continue.</h1>";
 	}
 
 	exit(0);
@@ -145,37 +149,37 @@ createTables();
 </div>
 <div>
 
-<p>ENABLE PLUGIN: <?PrintSettingCheckbox("Event Date Plugin", "ENABLED", 0, 0, "ON", "OFF", $pluginName ,$callbackName = "", $changedFunction=""); ?> </p>
-<p>Event Name: <?  PrintSettingTextSaved("EVENT_NAME", 0, 0, $maxlength = 32, $size = 32, $pluginName, $defaultValue = "The Event!", $callbackName = "updateOutputText", $changedFunction = "", $inputType = "text", $sData = array());?> </p>
-<p>Event Date: <? PrintSettingSelect("MONTH", "MONTH", 0, 0, $defaultValue= "1", getMonths(), $pluginName, $callbackName = "updateOutputText", $changedFunction = ""); ?> 
-<? PrintSettingSelect("DAY", "DAY", 0, 0, $defaultValue= "1", getDaysOfMonth(), $pluginName, $callbackName = "updateOutputText", $changedFunction = ""); ?>
- <? PrintSettingSelect("YEAR", "YEAR", 0, 0, $defaultValue= date("Y")+1, getYears(), $pluginName, $callbackName = "updateOutputText", $changedFunction = ""); ?>
- Hour: <? PrintSettingSelect("HOUR", "HOUR", 0, 0, $defaultValue= "0", getHours(), $pluginName, $callbackName = "updateOutputText", $changedFunction = ""); ?>
- Min: <? PrintSettingSelect("MIN", "MIN", 0, 0, $defaultValue= "0", getMinutes(), $pluginName, $callbackName = "updateOutputText", $changedFunction = ""); ?></p>
-<p>Pre Text: <?  PrintSettingTextSaved("PRE_TEXT", 0, 0, $maxlength = 32, $size = 32, $pluginName, $defaultValue = "It is", $callbackName = "updateOutputText", $changedFunction = "", $inputType = "text", $sData = array());?> </p>
-<p>Post Text <?  PrintSettingTextSaved("POST_TEXT", 0, 0, $maxlength = 32, $size = 32, $pluginName, $defaultValue = "until", $callbackName = "updateOutputText", $changedFunction = "", $inputType = "text", $sData = array());?> </p>
+<p>ENABLE PLUGIN: <?php PrintSettingCheckbox("Event Date Plugin", "ENABLED", 0, 0, "ON", "OFF", $pluginName ,$callbackName = "", $changedFunction=""); ?> </p>
+<p>Event Name: <?php   PrintSettingTextSaved("EVENT_NAME", 0, 0, $maxlength = 32, $size = 32, $pluginName, $defaultValue = "The Event!", $callbackName = "updateOutputText", $changedFunction = "", $inputType = "text", $sData = array());?> </p>
+<p>Event Date: <?php  PrintSettingSelect("MONTH", "MONTH", 0, 0, $defaultValue= "1", getMonths(), $pluginName, $callbackName = "updateOutputText", $changedFunction = ""); ?> 
+<?php  PrintSettingSelect("DAY", "DAY", 0, 0, $defaultValue= "1", getDaysOfMonth(), $pluginName, $callbackName = "updateOutputText", $changedFunction = ""); ?>
+ <?php  PrintSettingSelect("YEAR", "YEAR", 0, 0, $defaultValue= date("Y")+1, getYears(), $pluginName, $callbackName = "updateOutputText", $changedFunction = ""); ?>
+ Hour: <?php  PrintSettingSelect("HOUR", "HOUR", 0, 0, $defaultValue= "0", getHours(), $pluginName, $callbackName = "updateOutputText", $changedFunction = ""); ?>
+ Min: <?php  PrintSettingSelect("MIN", "MIN", 0, 0, $defaultValue= "0", getMinutes(), $pluginName, $callbackName = "updateOutputText", $changedFunction = ""); ?></p>
+<p>Pre Text: <?php   PrintSettingTextSaved("PRE_TEXT", 0, 0, $maxlength = 32, $size = 32, $pluginName, $defaultValue = "It is", $callbackName = "updateOutputText", $changedFunction = "", $inputType = "text", $sData = array());?> </p>
+<p>Post Text <?php   PrintSettingTextSaved("POST_TEXT", 0, 0, $maxlength = 32, $size = 32, $pluginName, $defaultValue = "until", $callbackName = "updateOutputText", $changedFunction = "", $inputType = "text", $sData = array());?> </p>
 <p><h3>If the remaining time is more than a day then you can select to include the hours and/or minutes.</br>
 If the remaining time is less than a day, the plugin will automatically display the hours and minutes remaining.</h3></p>
-<p>Include Hours: <?PrintSettingCheckbox("INCLUDE_HOURS", "INCLUDE_HOURS", 0, 0, "ON", "OFF", $pluginName ,$callbackName = "updateOutputTextHours", $changedFunction = ""); ?> </p>
-<p>Include Minutes: <?PrintSettingCheckbox("INCLUDE_MINUTES", "INCLUDE_MINUTES", 0, 0, "ON", "OFF", $pluginName ,$callbackName = "updateOutputTextMinutes", $changedFunction = ""); ?> </p>
+<p>Include Hours: <?php PrintSettingCheckbox("INCLUDE_HOURS", "INCLUDE_HOURS", 0, 0, "ON", "OFF", $pluginName ,$callbackName = "updateOutputTextHours", $changedFunction = ""); ?> </p>
+<p>Include Minutes: <?php PrintSettingCheckbox("INCLUDE_MINUTES", "INCLUDE_MINUTES", 0, 0, "ON", "OFF", $pluginName ,$callbackName = "updateOutputTextMinutes", $changedFunction = ""); ?> </p>
 <p>Your message will appear as:</p>
 <div class= "marquee" id="scroll-container" >
 <p id="scroll-text">temp text <p>
 
 </div>
-<input type=hidden name=LAST_READ value= <? $LAST_READ ?>>
+<input type=hidden name=LAST_READ value= "<?php echo $LAST_READ; ?>">
 <p><h3>If you want your message to display immediately when the command to run the countdown </br>
 is activated then enable the Immediate Output. Otherwise the message will be stored in the </br>
 Matrix Message Queue until you give the Matrix Message Queue the command to run.</h3></p>
-<p>Immediately output to Matrix (Run MATRIX plugin): <? PrintSettingCheckbox("Immediate output to Matrix", "IMMEDIATE_OUTPUT", $restart = 0, $reboot = 0, "ON", "OFF", $pluginName = $pluginName, $callbackName = ""); ?> </p>
+<p>Immediately output to Matrix (Run MATRIX plugin): <?php  PrintSettingCheckbox("Immediate output to Matrix", "IMMEDIATE_OUTPUT", $restart = 0, $reboot = 0, "ON", "OFF", $pluginName = $pluginName, $callbackName = ""); ?> </p>
 <p>The Matrix message Plugin location should be the default of 127.0.0.1 unless you have a specialized installation configuration.</p>
-MATRIX Message Plugin Location: ;<?  PrintSettingTextSaved("MATRIX_LOCATION", 0, 0, $maxlength = 15, $size = 15, $pluginName, $defaultValue = "127.0.0.1", $callbackName = "", $changedFunction = "", $inputType = "text", $sData = array());?> 
+MATRIX Message Plugin Location: ;<?php   PrintSettingTextSaved("MATRIX_LOCATION", 0, 0, $maxlength = 15, $size = 15, $pluginName, $defaultValue = "127.0.0.1", $callbackName = "", $changedFunction = "", $inputType = "text", $sData = array());?> 
 
 
 </form>
 
 
-<p>To report a bug, please file it against the sms Control plugin project on Git:<? echo $gitURL;?> 
+<p>To report a bug, please file it against the sms Control plugin project on Git:<?php echo $gitURL;?> 
 </fieldset>
 </div>
 <br />
