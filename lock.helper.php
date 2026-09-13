@@ -17,7 +17,7 @@
 		public static function lock() {
 			global $argv;
 
-			$lock_file = LOCK_DIR.$argv[0].LOCK_SUFFIX;
+			$lock_file = LOCK_DIR.basename($argv[0]).LOCK_SUFFIX;
 
 			if(file_exists($lock_file)) {
 				//return FALSE;
@@ -45,9 +45,10 @@
 		public static function unlock() {
 			global $argv;
 
-			$lock_file = LOCK_DIR.$argv[0].LOCK_SUFFIX;
+			$lock_file = LOCK_DIR.basename($argv[0]).LOCK_SUFFIX;
 
-			if(file_exists($lock_file))
+			// Only remove the lock file if it belongs to this process
+			if(file_exists($lock_file) && trim(file_get_contents($lock_file)) == (string)getmypid())
 				unlink($lock_file);
 
 			logEntry("==".self::$pid."== Releasing lock...");

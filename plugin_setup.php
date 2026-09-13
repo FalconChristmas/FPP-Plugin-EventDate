@@ -17,7 +17,7 @@ $fpp_matrixtools_Plugin_Script = "scripts/matrixtools";
 $messageQueue_Plugin = "FPP-Plugin-MessageQueue";
 $matrixMessage_Plugin = "FPP-Plugin-Matrix-Message";
 $messageQueuePluginPath = $settings['pluginDirectory'] . "/" . $messageQueue_Plugin."/";
-$logFile = $settings['logDirectory']."/".$pluginName.".log";
+$logFile = $settings['logDirectory']."/plugin-".$pluginName.".log";
 
 if (!file_exists($messageQueuePluginPath . "functions.inc.php")) {
     logEntry("Message Queue Aggregator for Plugins is not installed, cannot use this plugin without it");
@@ -167,7 +167,7 @@ If the remaining time is less than a day, the plugin will automatically display 
 <p id="scroll-text">temp text <p>
 
 </div>
-<input type=hidden name=LAST_READ value= "<?php echo $LAST_READ; ?>">
+<input type=hidden name=LAST_READ value="<?php echo htmlspecialchars($LAST_READ, ENT_QUOTES); ?>">
 <p><h3>If you want your message to display immediately when the command to run the countdown </br>
 is activated then enable the Immediate Output. Otherwise the message will be stored in the </br>
 Matrix Message Queue until you give the Matrix Message Queue the command to run.</h3></p>
