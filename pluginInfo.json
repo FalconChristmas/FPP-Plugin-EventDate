@@ -6,6 +6,7 @@
     "homeURL": "https://github.com/FalconChristmas/FPP-Plugin-EventDate",
     "srcURL": "https://github.com/FalconChristmas/FPP-Plugin-EventDate.git",
     "bugURL": "https://github.com/FalconChristmas/FPP-Plugin-EventDate/issues",
+    "iconURL": "https://raw.githubusercontent.com/FalconChristmas/FPP-Plugin-EventDate/Command-Preset/icon.png",
     "allowUpdates": 1,
     "versions": [
         {
