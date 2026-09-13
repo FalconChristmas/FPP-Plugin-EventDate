@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?
-error_reporting(0);
+error_reporting(E_ALL & ~(E_NOTICE | E_WARNING | E_DEPRECATED));
 //
 //Version 1 for release
 $pluginName = basename(dirname(__FILE__));
@@ -22,7 +22,7 @@ include_once("commonFunctions.inc.php");
 
 
 
-$logFile = $settings['logDirectory']."/".$pluginName.".log";
+$logFile = $settings['logDirectory']."/plugin-".$pluginName.".log";
 
 $messageQueuePluginPath = $pluginDirectory."/".$messageQueue_Plugin."/";
 
@@ -47,14 +47,14 @@ $MATRIX_EXEC_PAGE_NAME = "matrix.php";
 
 require ("lock.helper.php");
 
-define('LOCK_DIR', '/tmp/');
+define('LOCK_DIR', __DIR__ . '/');
 define('LOCK_SUFFIX', $pluginName.'.lock');
 
 $pluginConfigFile = $settings['configDirectory'] . "/plugin." .$pluginName;
 if (file_exists($pluginConfigFile))
 	$pluginSettings = parse_ini_file($pluginConfigFile);
 
-	$logFile = $settings['logDirectory']."/".$pluginName.".log";
+	$logFile = $settings['logDirectory']."/plugin-".$pluginName.".log";
 	$DEBUG=urldecode($pluginSettings['DEBUG']);
 	
 
@@ -196,6 +196,8 @@ if($IMMEDIATE_OUTPUT != "ON") {
 		
 		$ch = curl_init ();
 		curl_setopt ( $ch, CURLOPT_URL, $curlURL );
+		curl_setopt ( $ch, CURLOPT_CONNECTTIMEOUT, 5 );
+		curl_setopt ( $ch, CURLOPT_TIMEOUT, 10 );
 		
 		curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, true );
 		curl_setopt ( $ch, CURLOPT_WRITEFUNCTION, 'do_nothing' );

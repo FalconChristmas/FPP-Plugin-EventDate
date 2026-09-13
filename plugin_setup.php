@@ -29,7 +29,7 @@ if (strpos($pluginName, "FPP-Plugin") !== false) {
 $MESSAGE_QUEUE_PLUGIN_ENABLED=false;
 
 
-$logFile = $settings['logDirectory']."/".$pluginName.".log";
+$logFile = $settings['logDirectory']."/plugin-".$pluginName.".log";
 
 $messageQueuePluginPath = $settings['pluginDirectory'] . "/" . $messageQueue_Plugin."/";
 $messageQueueFile = urldecode(ReadSettingFromFile("MESSAGE_FILE", $messageQueue_Plugin));
@@ -191,7 +191,7 @@ createTables();
 <?
 //will add a 'reset' to this later
 
-echo "<input type=\"hidden\" name=\"LAST_READ\" value=\"".$LAST_READ."\"> \n";
+echo "<input type=\"hidden\" name=\"LAST_READ\" value=\"".htmlspecialchars($LAST_READ, ENT_QUOTES)."\"> \n";
 
 
 $restart=0;

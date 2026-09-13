@@ -13,9 +13,9 @@ function printMinSelection($min, $minName) {
 	for($i=0;$i<=59;$i++) {
 
 		if($i == $min) {
-			echo "<option selected value=\"".$i."\">".str_pad($i,2,'0',STR_PAD_LEFT)."</option> \n";
+			echo "<option selected value=\"".(int)$i."\">".str_pad($i,2,'0',STR_PAD_LEFT)."</option> \n";
 		} else {
-			echo "<option  value=\"".$i."\">".str_pad($i,2,'0',STR_PAD_LEFT)."</option> \n";
+			echo "<option  value=\"".(int)$i."\">".str_pad($i,2,'0',STR_PAD_LEFT)."</option> \n";
 		}
 	}
 	echo "</select> \n";
@@ -30,9 +30,9 @@ function printHourSelection($hour, $hourName) {
 	for($i=0;$i<=23;$i++) {
 		
 		if($i == $hour) {
-			echo "<option selected value=\"".$i."\">".str_pad($i,2,'0',STR_PAD_LEFT)."</option> \n";
+			echo "<option selected value=\"".(int)$i."\">".str_pad($i,2,'0',STR_PAD_LEFT)."</option> \n";
 		} else {
-			echo "<option  value=\"".$i."\">".str_pad($i,2,'0',STR_PAD_LEFT)."</option> \n";
+			echo "<option  value=\"".(int)$i."\">".str_pad($i,2,'0',STR_PAD_LEFT)."</option> \n";
 		}
 	}
 	echo "</select> \n";
@@ -79,9 +79,9 @@ function printDaySelection($day, $dayName) {
 	for($i=1;$i<=31;$i++) {
 		
 		if($i == $day) {
-			echo "<option selected value=\"".$i."\">".$i."</option> \n";
+			echo "<option selected value=\"".(int)$i."\">".$i."</option> \n";
 		} else {
-			echo "<option  value=\"".$i."\">".$i."</option> \n";
+			echo "<option  value=\"".(int)$i."\">".$i."</option> \n";
 		}
 	}
 	echo "</select> \n";
