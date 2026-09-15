@@ -39,5 +39,27 @@
             "branch": "Command-Preset",
             "sha": ""
         }
-    ]
+    ],
+    "privacy": {
+        "summary": "Sends your countdown text to the Matrix Message plugin address you enter (this device by default) and copies a script into FPP's scripts folder. Nothing goes online.",
+        "sends": [
+            {
+                "to": "http://the Matrix Message plugin address you enter (127.0.0.1 by default)",
+                "what": "the countdown message text",
+                "why": "to show the countdown on the matrix straight away",
+                "alwaysOn": false
+            }
+        ],
+        "collects": [],
+        "sensors": [],
+        "remoteAccess": "none",
+        "systemChanges": [
+            {
+                "kind": "core-settings",
+                "what": "copies RUN-COUNTDOWN-SCRIPT.sh into FPP's scripts folder (/home/fpp/media/scripts) at install"
+            }
+        ],
+        "closedCode": false,
+        "other": "The countdown message is written into the Message Queue plugin's database and its own plugin log records the event name, date and message. The copied script and the plugin settings remain after uninstall."
+    }
 }
