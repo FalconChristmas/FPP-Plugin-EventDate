@@ -6,7 +6,8 @@
     "homeURL": "https://github.com/FalconChristmas/FPP-Plugin-EventDate",
     "srcURL": "https://github.com/FalconChristmas/FPP-Plugin-EventDate.git",
     "bugURL": "https://github.com/FalconChristmas/FPP-Plugin-EventDate/issues",
-    "iconURL": "https://raw.githubusercontent.com/FalconChristmas/FPP-Plugin-EventDate/Command-Preset/icon.png",
+    "iconURL": "https://raw.githubusercontent.com/FalconChristmas/FPP-Plugin-EventDate/master/icon.png",
+    "releaseNotesStyle": "gitHistory",
     "allowUpdates": 1,
     "versions": [
         {
@@ -41,25 +42,28 @@
         }
     ],
     "privacy": {
-        "summary": "Sends your countdown text to the Matrix Message plugin address you enter (this device by default) and copies a script into FPP's scripts folder. Nothing goes online.",
-        "sends": [
-            {
-                "to": "http://the Matrix Message plugin address you enter (127.0.0.1 by default)",
-                "what": "the countdown message text",
-                "why": "to show the countdown on the matrix straight away",
-                "alwaysOn": false
-            }
-        ],
-        "collects": [],
-        "sensors": [],
-        "remoteAccess": "none",
-        "systemChanges": [
-            {
-                "kind": "core-settings",
-                "what": "copies RUN-COUNTDOWN-SCRIPT.sh into FPP's scripts folder (/home/fpp/media/scripts) at install"
-            }
-        ],
-        "closedCode": false,
-        "other": "The countdown message is written into the Message Queue plugin's database and its own plugin log records the event name, date and message. The copied script and the plugin settings remain after uninstall."
+      "summary": "Counts down to an event date and sends the countdown message to a display address you enter in the plugin settings.",
+      "sends": [
+        {
+          "to": "http://the display address entered in the plugin settings",
+          "what": "countdown message text for the event",
+          "why": "so the matrix display at that address can show the countdown",
+          "alwaysOn": false
+        }
+      ],
+      "collects": [
+        {
+          "what": "event name and countdown message text written to the log",
+          "about": "operator",
+          "keptDays": null,
+          "canDelete": false,
+          "where": "plugin log"
+        }
+      ],
+      "sensors": [],
+      "remoteAccess": "none",
+      "systemChanges": [],
+      "closedCode": false,
+      "other": "none"
     }
 }
