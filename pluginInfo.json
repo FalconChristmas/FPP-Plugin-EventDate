@@ -6,6 +6,8 @@
     "homeURL": "https://github.com/FalconChristmas/FPP-Plugin-EventDate",
     "srcURL": "https://github.com/FalconChristmas/FPP-Plugin-EventDate.git",
     "bugURL": "https://github.com/FalconChristmas/FPP-Plugin-EventDate/issues",
+    "iconURL": "https://raw.githubusercontent.com/FalconChristmas/FPP-Plugin-EventDate/master/icon.png",
+    "releaseNotesStyle": "gitHistory",
     "allowUpdates": 1,
     "versions": [
         {
@@ -38,5 +40,30 @@
             "branch": "Command-Preset",
             "sha": ""
         }
-    ]
+    ],
+    "privacy": {
+      "summary": "Counts down to an event date and sends the countdown message to a display address you enter in the plugin settings.",
+      "sends": [
+        {
+          "to": "http://the display address entered in the plugin settings",
+          "what": "countdown message text for the event",
+          "why": "so the matrix display at that address can show the countdown",
+          "alwaysOn": false
+        }
+      ],
+      "collects": [
+        {
+          "what": "event name and countdown message text written to the log",
+          "about": "operator",
+          "keptDays": null,
+          "canDelete": false,
+          "where": "plugin log"
+        }
+      ],
+      "sensors": [],
+      "remoteAccess": "none",
+      "systemChanges": [],
+      "closedCode": false,
+      "other": "none"
+    }
 }
